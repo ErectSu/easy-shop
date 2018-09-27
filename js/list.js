@@ -1,17 +1,20 @@
-var shop_js=(function(){
+var index_js=(function(){
     var $ul=$('.tbox');
     var shopList=localStorage.shopList||'[]';
     shopList=JSON.parse(shopList);
     return {
         init:function(){
             this.events();
-            this.insertData(shopList);
+            this.getData();
 
+        },
+        getData:function(){
+            $.get('json/shop.json',this.insertData,'json');
         },
         insertData:function(data){
             var str='';
             for(var i=0;i<data.length;i++){
-                var li=`<tr id='${data[i].id}'><td>${data[i].name}</td><td>${data[i].price}</td><td><input type='number' value='${data[i].count}'/></td><td><button class='btn btn-danger del-btn'>删除</button></td></tr>`;
+                var li=`<tr id='${data[i].id}'><td>${data[i].name}</td><td>${data[i].price}</td><td><input type='number' value='1'/></td><td><button class='btn btn-danger'>添加到购物车</button></td></tr>`;
                 str+=li;
 
             }
@@ -19,8 +22,8 @@ var shop_js=(function(){
         },
         addShop:function(obj){
             var flag=true;
-            var shopList=localStorage.shopList||'[]';
-            shopList=JSON.parse(shopList);
+            //var shopList=localStorage.shopList||'[]';
+            //shopList=JSON.parse(shopList);
             for(var i=0;i<shopList.length;i++){
                 if(obj.id==shopList[i].id){
                     flag=false;
@@ -35,21 +38,20 @@ var shop_js=(function(){
         },
         events:function(){
             var _this=this;
-            $ul.on('change','input',function(){
+           
+            $ul.on('click','.btn',function(){
                 var tr=$(this).closest('tr');
-                var val=$(this).val();
-                shopList[tr.index()].count=val;
-                localStorage.shopList=JSON.stringify(shopList);
-            })
-            $ul.on('click','.del-btn',function(){
-                var tr=$(this).closest('tr');
-                
-                shopList.splice(tr.index(),1);;
-                localStorage.shopList=JSON.stringify(shopList);
-                tr.remove();
+                var tdAll=tr.children('td');
+                var obj={
+                    id:tr.attr('id'),
+                    count:Number(tdAll.find('input').val()),
+                    name:tdAll.eq(0).html(),
+                    price:tdAll.eq(1).html()
+                }
+                _this.addShop(obj);
             })
             
         }
     }
 }())
-shop_js.init();
+index_js.init();
