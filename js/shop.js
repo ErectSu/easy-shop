@@ -24,7 +24,7 @@ var shop_js=(function(){
             for(var i=0;i<shopList.length;i++){
                 if(obj.id==shopList[i].id){
                     flag=false;
-                    shopList[i].count+=obj.count;
+                    shopList[i].count=Number(shopList[i].count)+obj.count;
                     break;
                 }
             }
@@ -51,5 +51,5 @@ var shop_js=(function(){
             
         }
     }
-}())
+}());
 shop_js.init();
